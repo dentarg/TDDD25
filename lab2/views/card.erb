@@ -1,0 +1,28 @@
+<html>
+<head>
+  <title>Cards</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+
+<% if @card %>
+<h2><%= @card.title %></h2>
+
+<p><img src="<%= @card.url %>" alt="<%= @card.title %>" /></p>
+
+
+<form method="post" action="/write_message">
+  <p><textarea name="msg"></textarea></p>
+  <p><input type="hidden" name="filename" value="<%= @card.filename %>" />
+  <p><input type="submit" /></p>
+</form>
+
+
+<% else %>
+
+<p>Card not found: <%= params[:card] %></p>
+<% end %>
+
+<p><a href="/">Back</a></p>
+
+</body>
+</html>

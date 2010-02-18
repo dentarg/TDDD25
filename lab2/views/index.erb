@@ -1,0 +1,27 @@
+<html>
+<head>
+  <title>Cards</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+
+<center>
+
+<table>
+<tr>
+<% @cards.each_with_index do |card,i| %>
+  <td>
+    <a href="/<%= card.filename %>">
+    <img src="<%= card.thumb_url %>" alt="<%= card.title %>"/>
+    </a>
+  </td>
+  <% if i>0 && i%6 == 0 %>
+    </tr><tr>
+  <% end %>
+<% end %>
+</tr>
+</table>
+
+</center>
+
+</body>
+</html>
