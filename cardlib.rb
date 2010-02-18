@@ -50,7 +50,7 @@ class Card
     w.write("#{x} #{y} #{width} #{height}")
     w.write(message)
     w.write("end-of-message")
-    url_to_img_with_msg = w.read.chop
+    url_to_img_with_msg = w.read
     w.close
     return url_to_img_with_msg
   end  
@@ -68,7 +68,7 @@ class CardDatabaseServer
   end
   
   def read
-    @socket.gets
+    @socket.gets.chop
   end  
   
   def close
@@ -83,14 +83,14 @@ class CardDatabaseServer
   
   def getCard(index)
     write("getCardInfo #{index}\n")
-    title     = read.chop
-    filename  = read.chop
-    url       = read.chop
-    thumb_url = read.chop
-    x         = read.chop
-    y         = read.chop    
-    width     = read.chop
-    height    = read.chop
+    title     = read
+    filename  = read
+    url       = read
+    thumb_url = read
+    x         = read
+    y         = read
+    width     = read
+    height    = read
     Card.new(title,filename,url,thumb_url,x,y,width,height)
   end
 end
@@ -107,21 +107,12 @@ class CardWriteServer
   end
   
   def read
-    @socket.gets
+    @socket.gets.chop
   end
   
   def close
     write("exit")
     @socket.close
-  end
-    
-  def write_message(card, message)
-    write(card.filename)
-    write("foo#{rand(1337)}.jpg")
-    write("#{card.x} #{card.y} #{card.width} #{card.height}")
-    write(message)
-    write("end-of-message")
-    read.chop
   end
 end
 
@@ -142,5 +133,5 @@ def testCardDatabaseServer
   s.close
 end
 
-#testCardDatabaseServer
-#testCardWriteServer
+testCardDatabaseServer
+testCardWriteServer
