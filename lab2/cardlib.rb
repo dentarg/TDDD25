@@ -48,7 +48,6 @@ class Card
   
   def write_message(message)
     w = CardWriteServer.new
-    puts title
     w.write(filename)
     w.write("foo#{rand(1337)}.jpg")
     w.write("#{x} #{y} #{width} #{height}")
