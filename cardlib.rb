@@ -26,6 +26,10 @@ class Card
     @url
   end
   
+  def thumb_url
+    @thumb_url
+  end
+
   def x
     @x
   end
@@ -101,6 +105,15 @@ class CardDatabaseServer
     end
     cards
   end
+
+  def getCardByFilename(filename)
+    getAllCards.each do |card|
+      if card.filename == filename
+        return card
+      end
+    end
+    return nil
+  end
 end
 
 class CardWriteServer
@@ -140,5 +153,5 @@ def testCardDatabaseServer
   s.close
 end
 
-testCardDatabaseServer
+#testCardDatabaseServer
 #testCardWriteServer
