@@ -21,8 +21,10 @@ post '/write_message' do
   card = server.getCardByFilename(params[:filename])
   server.close
   if card
-    img_url  = card.write_message(params[:msg])
-    "<img src='#{img_url}' />"
+    img_url = card.write_message(params[:msg])
+    "<p><img src='#{img_url}' /></p> \n
+    <p><a href='/#{card.filename}'>Back to image</a> |
+    <a href='/'>Back to index</a></p>"
   else
     "Card not found"
   end
