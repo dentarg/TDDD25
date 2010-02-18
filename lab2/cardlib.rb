@@ -2,49 +2,9 @@ require 'socket'
 
 # http://www.ida.liu.se/~TDDD25/labs/lab2_1/protocols.shtml
 
-class Card
-  def initialize(title,filename,url,thumb_url,x,y,width,height)
-    @title     = title    
-    @filename  = filename 
-    @url       = url      
-    @thumb_url = thumb_url
-    @x         = x        
-    @y         = y            
-    @width     = width    
-    @height    = height
-  end
+class Card <
   
-  def title
-    @title
-  end
-  
-  def filename
-    @filename
-  end
-  
-  def url
-    @url
-  end
-  
-  def thumb_url
-    @thumb_url
-  end
-
-  def x
-    @x
-  end
-  
-  def y
-    @y
-  end
-  
-  def width
-    @width
-  end
-  
-  def height
-    @height
-  end
+  Struct.new(:title, :filename, :url, :thumb_url, :x, :y, :width, :height)
   
   def write_message(message)
     w = CardWriteServer.new
