@@ -93,6 +93,14 @@ class CardDatabaseServer
     height    = read
     Card.new(title,filename,url,thumb_url,x,y,width,height)
   end
+
+  def getAllCards
+    cards = []
+    for i in 1..getCardsNumber
+       cards << getCard(i)
+    end
+    cards
+  end
 end
 
 class CardWriteServer
@@ -126,12 +134,11 @@ end
 
 def testCardDatabaseServer
   s = CardDatabaseServer.new
-  for i in 1..s.getCardsNumber
-    card = s.getCard(i)
+  s.getAllCards.each do |card|
     puts card.title
   end
   s.close
 end
 
 testCardDatabaseServer
-testCardWriteServer
+#testCardWriteServer
