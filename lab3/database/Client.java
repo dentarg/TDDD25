@@ -38,6 +38,11 @@ public class Client extends java.applet.Applet implements ActionListener {
 		nc[0] = new NameComponent("Database","trapo");
 		org.omg.CORBA.Object obj = ((NamingContext)root).resolve(nc);
 		Database database = DatabaseHelper.narrow(obj);
+
+		NameComponent[] nc2 = new NameComponent[1];
+		nc2[0] = new NameComponent("Writer","trapo");
+		org.omg.CORBA.Object obj2 = ((NamingContext)root).resolve(nc2);
+		Writer writer = WriterHelper.narrow(obj2);
 	
 		//
 		// Main loop
@@ -49,6 +54,7 @@ public class Client extends java.applet.Applet implements ActionListener {
 		System.out.println("  4: getCardURL()");
 		System.out.println("  5: getCardThumb()");
 		System.out.println("  6: getCardArea()");
+		System.out.println("  7: writeCard()");
 		
 		try {
 			String input;
@@ -95,6 +101,18 @@ public class Client extends java.applet.Applet implements ActionListener {
 							database.getCardArea(readCardNumber(in), xHolder, yHolder, 
 							widthHolder, heightHolder));
 						break;
+						
+					case 7:
+						short number = readCardNumber(in);
+						System.out.print("Message? ");
+						String message = in.readLine();
+				    	writer.setCard(database.getCardFile(number), 
+							(short) 10, (short) 10, (short) 100, (short) 100);
+						writer.setMessage(message);
+						String outputFileName = "foo";
+				    	String url = writer.writeCard(outputFileName);
+						System.out.println("writeCard(): " + url);
+						break;						
 					default: 
 						System.out.println("error");
 				}
@@ -105,7 +123,7 @@ public class Client extends java.applet.Applet implements ActionListener {
 			return 1;
 		}
 		catch(java.lang.NumberFormatException ex) {
-			System.err.println("Invalid input");
+			System.err.println("Invalid input (1)");
 			return 1;
 		}
 		return 0;
@@ -123,7 +141,7 @@ public class Client extends java.applet.Applet implements ActionListener {
 			return 1;
 		}
 		catch(java.lang.NumberFormatException ex) {
-			System.err.println("Invalid input");
+			System.err.println("Invalid input (2)");
 			return 0;
 		}
   	}
