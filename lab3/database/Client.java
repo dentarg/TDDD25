@@ -35,7 +35,8 @@ public class Client extends java.applet.Applet implements ActionListener {
 			org.omg.CosNaming.NamingContextHelper.narrow(rootObj);
    	
 		NameComponent[] nc = new NameComponent[1];
-		nc[0] = new NameComponent("Database","trapo");
+//		nc[0] = new NameComponent("Database","trapo");
+		nc[0] = new NameComponent("Database","foo123");
 		org.omg.CORBA.Object obj = ((NamingContext)root).resolve(nc);
 		Database database = DatabaseHelper.narrow(obj);
 

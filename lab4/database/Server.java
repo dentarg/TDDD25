@@ -40,7 +40,7 @@ public class Server {
 
 		// Bind the name of the Database object to the NameService
 		NameComponent[] nc = new NameComponent[1];
-		nc[0]=new NameComponent("Database","ragpa737_java");
+		nc[0]=new NameComponent("Database","foo123");
 		((NamingContext)root).bind(nc, rootPOA.servant_to_reference(databaseImpl));   	
 
 /*		//
