@@ -13,6 +13,9 @@ package lock;
 import org.omg.CosNaming.*;
 import org.omg.CORBA.*;
 
+import java.lang.Math;
+import java.lang.Thread;
+
 public class Lock_impl extends LockPOA
 {
 	// Declaration of the array that stores the remote references
@@ -21,8 +24,17 @@ public class Lock_impl extends LockPOA
 	//
 	// TODO:
 	// Declare necessary variables
+	private short  my_id;
+	private int    state;
+	private int    number_of_clients;
+	private int[]  token;
+	private int[]  request;
+	public static final int NO_TOKEN       = 0;
+   public static final int TOKEN_PRESENT  = 1;
+   public static final int TOKEN_HELD     = 2;
+   public static final boolean DEBUG      = false;
 
-	
+
     // The servants default POA
     private org.omg.PortableServer.POA poa_;
 
@@ -57,6 +69,10 @@ public class Lock_impl extends LockPOA
 		System.out.println(id+" at remote logical time "+logical_time);
 
 		// TODO: Implement code for handling token requests from remote objects
+      request[id] = Math.max(request[id], logical_time);
+      if(state == TOKEN_PRESENT) {
+         release_token();
+      }
 	}
 
 /*
@@ -65,7 +81,9 @@ public class Lock_impl extends LockPOA
 	public void acquire_token(int[] token) {
 		System.out.println("Token acquired!");
 
-		// TODO: Implement code for acquiring the token from a remote object		
+		// TODO: Implement code for acquiring the token from a remote object
+		this.token = token;
+      state = TOKEN_HELD;
 	}
 
 /*
@@ -123,6 +141,23 @@ public class Lock_impl extends LockPOA
 		
 		//
 		// TODO: Initialization of variables, such as the token.
+      this.my_id = (short) my_id;
+      this.number_of_clients = number_of_clients;
+      token = new int[number_of_clients];
+      request = new int[number_of_clients];
+
+      for(int i = 0; i < number_of_clients; i++) {
+         token[i] = 0;
+         request[i] = 0;
+      }
+
+      if(has_token){
+         state = TOKEN_PRESENT;
+      }
+      else {
+         state = NO_TOKEN;
+      }
+
 	}
 
 
@@ -137,6 +172,29 @@ public class Lock_impl extends LockPOA
 		// TODO:
 		// Implement code for acquiring the lock. This means requesting the token
 		// from all other clients, if we do not already have it.
+		if(state == NO_TOKEN) {
+		   for(int i = 0; i < number_of_clients; i++) {
+		      if(i != my_id) { // do not request from myself
+		         objArray[i].request_token(my_id, token[my_id] + 1);
+	         }
+		   }
+		   // wait until we receive token
+		   while(true) {
+		      if(state == TOKEN_HELD) {
+		         break;
+		      }
+		      else {
+		         try {
+		            Thread.sleep(500);
+		         }
+		         catch(InterruptedException e) {
+		            System.err.println("sleep error");
+		         }
+		      }
+		   }
+	   }
+	   state = TOKEN_HELD;
+	   // enter critical section
     }
     
 /*
@@ -149,6 +207,8 @@ public class Lock_impl extends LockPOA
 		// TODO:
 		// Implement code for releasing the lock.
 		// If a remote object wants the token, send it!
+		state = TOKEN_PRESENT;
+		release_token();
 	
 		System.out.println("Lock released!");
     }
@@ -157,5 +217,25 @@ public class Lock_impl extends LockPOA
 	//
 	// TODO:
 	// Declare necessary (if any) local methods
+	public void release_token() {
+	   if(DEBUG) {
+         System.out.println("release_token called from my_id: " + my_id);
+         System.out.println("state: " + state);
+         for(int i = 0; i < number_of_clients; i++) {
+            System.out.println("token["+i+"]: " + token[i]);
+            System.out.println("request["+i+"]: " + request[i]);
+         }
+      }
+
+	   for(int i = 1; i <= number_of_clients; i++) {
+	      int k = (my_id + i) % number_of_clients;
+         if(request[k] > token[k]) {
+            state = NO_TOKEN;
+            token[my_id] = token[my_id] + 1;
+            objArray[k].acquire_token(token);
+            break;
+         }
+	   }
+	}
 
 }
